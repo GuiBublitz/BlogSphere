@@ -9,4 +9,14 @@ const pool = new Pool({
   port: process.env.POSTGRES_PORT,
 });
 
+async function checkDatabaseConnection() {
+  try {
+      const { rows } = await pool.query('SELECT NOW()');
+      console.log('Database connection is OK:', rows[0].now);
+  } catch (err) {
+      console.error('Database connectivity error:', err.message);
+  }
+}
+checkDatabaseConnection();
+
 module.exports = pool;

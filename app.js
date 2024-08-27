@@ -1,17 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const pool = require('./database/connection');
+const logger = require('./config/logger');
 const app = express();
 
-async function checkDatabaseConnection() {
-    try {
-        const { rows } = await pool.query('SELECT NOW()');
-        console.log('Database connection is OK:', rows[0].now);
-    } catch (err) {
-        console.error('Database connectivity error:', err.message);
-    }
-}
-checkDatabaseConnection();
+app.set('view engine', 'ejs');
+app.set('views', './views');
+app.use(express.static('public'));
+
+app.get("/", (req, res) => {
+    res.render("home");
+});
 
 const PORT = process.env.APP_PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

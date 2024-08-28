@@ -12,8 +12,8 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
-app.get("/aboutMe", (req, res) => {
-    res.render("aboutMe");
+app.get("/about", (req, res) => {
+    res.render("about");
 });
 
 app.use((req, res, next) => {

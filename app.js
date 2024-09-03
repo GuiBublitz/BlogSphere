@@ -1,26 +1,39 @@
 require('dotenv').config();
 const express = require('express');
-const pool = require('./database/connection');
 const logger = require('./config/logger');
 const app = express();
+
+// const pool = require('./database/connection');
+// const { getImagesByKeyword } = require('./image_searcher/searcher');
+// const { generatePost } = require('./blog_factory/aiWriter');
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
 
-// app.get("/", (req, res) => {
-//     res.render("home");
-// });
+app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.url} - ${req.ip}`);
+    next();
+});
 
-// app.get("/about", (req, res) => {
-//     res.render("about");
-// });
+app.get("/", (req, res) => {
+    res.render("home");
+});
+
+app.get("/about", (req, res) => {
+    res.render("about");
+});
 
 app.use((req, res, next) => {
-    // res.status(404).render("404");
-    res.status(403).send("Access Forbidden: This site is currently under development.");
+    logger.warn(`404 - Not Found - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+    res.status(404).render("404");
+});
+
+app.use((err, req, res, next) => {
+    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+    res.status(500).send('Something went wrong!');
 });
 
 
 const PORT = process.env.APP_PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));

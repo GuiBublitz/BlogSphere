@@ -13,7 +13,7 @@ async function getGoogleSearchResults(query) {
     await page.waitForSelector('div.g');
 
     const links = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('div.g a')).slice(0, 3).map(anchor => anchor.href);
+        return Array.from(document.querySelectorAll('div.g a')).slice(0, 5).map(anchor => anchor.href);
     });
 
     await browser.close();
@@ -32,12 +32,11 @@ async function extractUsefulContent(url) {
 
         return content;
     } catch (error) {
-        console.error(`Error extracting content from ${url}:`, error);
         return '';
     }
 }
 
-async function scrapeContent(query, maxTokens = 128000) {
+async function scrapeContent(query, maxTokens = 100000) {
     try {
         const urls = await getGoogleSearchResults(query);
         console.log('Google Search URLs:', urls);

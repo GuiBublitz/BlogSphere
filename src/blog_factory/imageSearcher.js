@@ -10,7 +10,8 @@ async function getImagesByKeyword(keyword) {
         cx: cseId,
         q: keyword,
         searchType: 'image',
-        num: 5,
+        num: 1,
+        imgSize: "LARGE",
     };
 
     try {

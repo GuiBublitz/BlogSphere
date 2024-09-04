@@ -1,15 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const logger = require('./config/logger');
+const logger = require('../config/logger');
 const app = express();
 
-// const pool = require('./database/connection');
-// const { getImagesByKeyword } = require('./image_searcher/searcher');
-// const { generatePost } = require('./blog_factory/aiWriter');
-
 app.set('view engine', 'ejs');
-app.set('views', './views');
-app.use(express.static('public'));
+app.set('views', 'src/views');
+app.use(express.static('./public'));
 
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.url} - ${req.ip}`);
@@ -18,6 +14,10 @@ app.use((req, res, next) => {
 
 app.get("/", (req, res) => {
     res.render("home");
+});
+
+app.get("/admin", (req, res) => {
+    res.render("admin");
 });
 
 app.get("/about", (req, res) => {

@@ -7,7 +7,7 @@ puppeteer.use(StealthPlugin());
 
 async function getGoogleSearchResults(query) {
     const browser = await puppeteer.launch({ 
-        headless: true,  // Set to false for debugging if needed
+        headless: true,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -21,19 +21,9 @@ async function getGoogleSearchResults(query) {
         ],
     });
     const page = await browser.newPage();
-
-    // Set a user-agent to avoid detection
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
-
-    // Log requests for debugging
-    page.on('requestfailed', request => {
-        console.log(`Request failed: ${request.url()} - ${request.failure().errorText}`);
-    });
-
     await page.goto(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
 
-    // Increase timeout to 60 seconds
-    await page.waitForSelector('div.g', { timeout: 60000 });
+    await page.waitForSelector('div.g');
 
     const links = await page.evaluate(() => {
         return Array.from(document.querySelectorAll('div.g a')).slice(0, 5).map(anchor => anchor.href);
@@ -55,7 +45,6 @@ async function extractUsefulContent(url) {
 
         return content;
     } catch (error) {
-        console.error(`Error fetching content from ${url}:`, error);
         return '';
     }
 }
@@ -114,5 +103,3 @@ function truncateToTokenLimit(text, maxTokens) {
 module.exports = {
     scrapeContent,
 };
-
-// Debugging logs: Use `DEBUG=puppeteer:* node aiWriter.js` to get detailed Puppeteer logs.

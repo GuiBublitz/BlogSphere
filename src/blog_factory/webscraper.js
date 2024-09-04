@@ -6,31 +6,14 @@ const axios = require('axios');
 puppeteer.use(StealthPlugin());
 
 async function getGoogleSearchResults(query) {
-    const browser = await puppeteer.launch({
-        headless: true,
-        executablePath: '/usr/bin/chromium-browser',
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--disable-gpu',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-extensions'
-        ],
-    });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-
     await page.goto(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
 
     await page.waitForSelector('div.g');
 
     const links = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('div.g a'))
-            .slice(0, 5)
-            .map(anchor => anchor.href);
+        return Array.from(document.querySelectorAll('div.g a')).slice(0, 5).map(anchor => anchor.href);
     });
 
     await browser.close();
@@ -49,7 +32,6 @@ async function extractUsefulContent(url) {
 
         return content;
     } catch (error) {
-        console.error(`Error extracting content from ${url}:`, error);
         return '';
     }
 }
@@ -60,7 +42,6 @@ async function scrapeContent(query, maxTokens = 100000) {
         console.log('Google Search URLs:', urls);
 
         const allContent = await scrapeMultipleWebsites(urls);
-
         let aggregatedContent = allContent.join('\n\n');
 
         aggregatedContent = truncateToTokenLimit(aggregatedContent, maxTokens);
@@ -85,9 +66,8 @@ async function scrapeMultipleWebsites(urls) {
     return allContent;
 }
 
-
 function countTokens(text) {
-    const approximateTokenCount = Math.ceil(text.length / 4);
+    const approximateTokenCount = Math.ceil(text.length / 4); 
     return approximateTokenCount;
 }
 

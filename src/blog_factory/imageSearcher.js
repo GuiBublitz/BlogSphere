@@ -8,10 +8,9 @@ async function getImagesByKeyword(keyword) {
     const params = {
         key: apiKey,
         cx: cseId,
-        q: keyword,
+        q: keyword + " imagens",
         searchType: 'image',
-        num: 1,
-        imgSize: "LARGE",
+        num: 1
     };
 
     try {

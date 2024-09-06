@@ -48,8 +48,8 @@ async function generateBlogContent(theme) {
     }
 
     for (const item of itemList) {
-        let imageLinks = await getImagesByKeyword(item + ' image');
-        const prompt = `Com base nos dados coletados: ${scrapedContent}\n\n Gere um tópico de post de blog sobre ${item}.\n Você pode seguir um formato de tópico semelhante a este: \"1.iPhone 15 Pro Max \n\n Iphone 15 pro max é, sem dúvida, um dos melhores smartphones de 2024. Equipado com o chip A17 Pro, ele oferece desempenho excepcional e eficiência energética. O design em titânio não só proporciona uma estética premium, mas também torna o aparelho mais leve. A câmera de 48 MP com zoom óptico de 5x é ideal para fotógrafos que buscam qualidade profissional." com no máximo 1000 caracteres. Coloque o conteudo dentro de uma tag p, e adicione essa imagem ${imageLinks[0]} em uma tag img como titulo do topico`;
+        let imageLinks = await getImagesByKeyword(item);
+        const prompt = `Com base nos dados coletados: ${scrapedContent}\n\n Gere um tópico de post de blog sobre ${item}.\n  Com no máximo 1000 caracteres. Coloque o conteudo seguindo exatamente esse formato: <div><h3>titulo</h3><img><p>conteudo</p></div>, e adicione essa imagem ${imageLinks[0]} a tag img como titulo do topico`;
         const blogContent = await promptGPT(prompt, "gpt-4o", 450);
         console.log(`Conteúdo do blog para ${item}:\n${blogContent}\n`);
 
@@ -57,7 +57,7 @@ async function generateBlogContent(theme) {
     }
 }
 
-generateBlogContent('top 10 personagens mais fortes de naruto');
+generateBlogContent('top personagens mais fortes de jujutsu kaisen');
 
 module.exports = {
     promptGPT

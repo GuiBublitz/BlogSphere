@@ -57,9 +57,7 @@ async function generateBlogContent(theme) {
     }
 }
 
-generateBlogContent('top 10 smartphones 2024');
-
-
+generateBlogContent('top 10 personagens mais fortes de naruto');
 
 module.exports = {
     promptGPT

@@ -1,36 +1,31 @@
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const cheerio = require('cheerio');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
-puppeteer.use(StealthPlugin());
+const apiKey = process.env.GOOGLE_API_KEY;
+const cseId = process.env.GOOGLE_CSE_ID;
+const apiUrl = process.env.GOOGLE_CUSTOMSEARCH_API_URL;
 
 async function getGoogleSearchResults(query) {
-    const browser = await puppeteer.launch({ 
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--disable-gpu',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-extensions'
-        ],
-    });
-    const page = await browser.newPage();
-    await page.goto(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
+    const params = {
+        key: apiKey,
+        cx: cseId,
+        q: query,
+        num: 5,
+    };
 
-    await page.waitForSelector('div.g');
+    try {
+        const response = await axios.get(apiUrl, { params });
+        const results = response.data.items;
 
-    const links = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('div.g a')).slice(0, 5).map(anchor => anchor.href);
-    });
-
-    await browser.close();
-    return links;
+        if (results.length > 0) {
+            return results.map(item => item.link);
+        } else {
+            return 'No results found.';
+        }
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        return 'Failed to fetch search results.';
+    }
 }
 
 async function extractUsefulContent(url) {
@@ -45,6 +40,7 @@ async function extractUsefulContent(url) {
 
         return content;
     } catch (error) {
+        console.error(`Error fetching content from ${url}:`, error);
         return '';
     }
 }
